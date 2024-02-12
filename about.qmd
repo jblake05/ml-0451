@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: profile.jpg
+image: seal.png
 about:
   template: jolla
   links:
@@ -16,4 +16,4 @@ about:
 
 ---
 
-About this blog
+Testing quarto!

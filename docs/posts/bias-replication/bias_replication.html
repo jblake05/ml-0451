@@ -560,7 +560,7 @@ window.Quarto = {
 </div>
 <p>This graph shows that, while there isn’t a cost disparity across race when comparing againsst percentile risk score, there is one when looking at the number of chronic illnesses. If we look at the datapoints at and below 5 chronic illnesses, where most patients lie, there is a lower average cost per black patients when compared to white patients. Considering the risk assessment model is done according to cost rather than illness, one can see how black patients would be disproportionately denied access to the program.</p>
 <p>Finally, we can model this cost disparity by looking at the data. This modelling experiment is informed on the equation:</p>
-<p><span class="math inline">\(logcost \approx w_b\)</span> <span class="math inline">\(*\)</span> (patient is black) <span class="math inline">\(+\)</span> intercept $+ _{i=1} ^{k} w_k * <span class="math inline">\((gagne sum)\)</span>^k$</p>
+<p><span class="math inline">\(logcost \approx w_b\)</span> <span class="math inline">\(*\)</span> (patient is black) <span class="math inline">\(+\)</span> intercept <span class="math inline">\(+\)</span> $_{i=1} ^{k} w_k * <span class="math inline">\((gagne sum)\)</span>^k$</p>
 <p>Where <span class="math inline">\(w_b\)</span> is the weight a model gives to the variable that a patient is black and <span class="math inline">\(w_k\)</span> are the weights given to the polynomial data of the number of chronic illnesses.</p>
 <p>From this we also find that <span class="math inline">\(e^{w_b}\)</span> is the percentage of average cost incurred by black patients compared to white patients</p>
 <p>To start, we observe that 95% of the patients have 5 or less chronic illnesses, making it a good subset of the data to generalize over.</p>

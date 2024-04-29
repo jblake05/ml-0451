@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/perceptron-post/index.html",
       "/posts/bias-replication/bias_replication.html",
       "/posts/optimal-decision-making/optimal.html",
       "/posts/new-new-test-post/index.html",

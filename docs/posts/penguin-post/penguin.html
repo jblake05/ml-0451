@@ -212,15 +212,21 @@ background-size: cover;
 
 
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>This blog post aims to explore the Palmer’s Penguins dataset. This will be done with visualizations and models, leading to predictions of species on the data. In particular, I will perform cross-validation techniques on the data to see which models and parameters yield the highest accuracy predictions. After choosing the most accurate models, I will graph the model’s decision boundaries to learn about the predictions being made.</p>
+</section>
+<section id="data-collection-and-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection-and-preparation">Data Collection and Preparation</h2>
 <p>To classify the Palmer Penguins, I first had to import the data set into my Python environment:</p>
-<div id="cell-2" class="cell" data-execution_count="2">
+<div id="cell-5" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>train_url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/palmer-penguins/train.csv"</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>train <span class="op">=</span> pd.read_csv(train_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I then checked the elements of set. This would give me an idea of what could be used for visualization and to train the models.</p>
-<div id="cell-4" class="cell" data-execution_count="3">
+<div id="cell-7" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>train.keys()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>Index(['studyName', 'Sample Number', 'Species', 'Region', 'Island', 'Stage',
@@ -231,7 +237,7 @@ background-size: cover;
 </div>
 </div>
 <p>Let’s look at the top of the data:</p>
-<div id="cell-6" class="cell" data-execution_count="4">
+<div id="cell-9" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
@@ -368,7 +374,7 @@ background-size: cover;
 </div>
 </div>
 <p>This provided function prepares the data by dropping non-helpful elements (i.e.&nbsp;identifying or helpful information to scientists working with the data that isn’t useful to the model). Species values are also encoded into numerical values so they can be output by the computer. Useless values like “.” sex penguins and NA value entires are also dropped from the set. This function creates X_train and y_train data that will be used throughout the fitting process, with X_train being the valid columns of the dataframe and y_train being the species (result) column.</p>
-<div id="cell-8" class="cell" data-execution_count="6">
+<div id="cell-11" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>le <span class="op">=</span> LabelEncoder()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>le.fit(train[<span class="st">"Species"</span>])</span>
@@ -384,7 +390,7 @@ background-size: cover;
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> prepare_data(train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-9" class="cell" data-execution_count="7">
+<div id="cell-12" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>X_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
 <div>
@@ -502,8 +508,11 @@ background-size: cover;
 </div>
 </div>
 </div>
+</section>
+<section id="cross-validation-testing" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation-testing">Cross Validation Testing</h2>
 <p>The following code tests different models on a variety of elements in the data. The qualitative and quantitative columns are put into individual arrays and are matched in groups of three (one qualitative column and two quantitative columns) using the combinations function from itertools. The different models – logistic regression, decision tree, random forest, and support vector from sklearn’s library – are tested using cross-validation to ensure models that overfit aren’t chosen. For the support vector and decision tree classifiers, other parameters (gamma and max depth respectively) are iterated over to ensure the highest score possible. For each model fit, the columns used, score, and extra parameters are appended to their results array. These results are sorted in descending order by highest score and a truncated version of each is printed out at the end of fitting. This allows for me to choose the best model and elements to fit to predict the test data.</p>
-<div id="cell-11" class="cell" data-execution_count="6">
+<div id="cell-15" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.exceptions <span class="im">import</span> ConvergenceWarning</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -581,8 +590,11 @@ RFC:
 [(0.9883107088989442, ['Sex_FEMALE', 'Sex_MALE', 'Culmen Length (mm)', 'Culmen Depth (mm)']), (0.9843891402714933, ['Island_Biscoe', 'Island_Dream', 'Island_Torgersen', 'Culmen Length (mm)', 'Culmen Depth (mm)']), (0.9806184012066363, ['Sex_FEMALE', 'Sex_MALE', 'Culmen Length (mm)', 'Flipper Length (mm)'])]</code></pre>
 </div>
 </div>
+</section>
+<section id="visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="visualizations">Visualizations</h2>
 <p>Before creating the models, I wanted to create the visualizations and tables out of the data I just received. I picked the data that I didn’t plan on using for the models, but still scored highly in the model fitting. This way, the data representations will be strongly related to the species of the penguin but won’t be redundant with the final models. I also had to choose between the different quantitative factors, as I felt that isolating to one factor would clearly show its relation to species. The data table, then, was made by grouping by qualitative factors and returning a quantitative factor.</p>
-<div id="cell-13" class="cell" data-execution_count="15">
+<div id="cell-18" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>gb <span class="op">=</span> train.groupby([<span class="st">"Island"</span>, <span class="st">"Species"</span>])[<span class="st">"Culmen Length (mm)"</span>].aggregate(<span class="st">"mean"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -596,7 +608,7 @@ Name: Culmen Length (mm), dtype: float64</code></pre>
 </div>
 </div>
 <p>For the visualizations, I chose two quantiative factors from high scoring models, using species as a color factor. This can be achieved easily with seaborn:</p>
-<div id="cell-15" class="cell" data-execution_count="11">
+<div id="cell-20" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">"Culmen Length (mm)"</span>, y<span class="op">=</span><span class="st">"Flipper Length (mm)"</span>, hue<span class="op">=</span><span class="st">"Species"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -608,7 +620,7 @@ Name: Culmen Length (mm), dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="10">
+<div id="cell-21" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>train, x<span class="op">=</span><span class="st">"Flipper Length (mm)"</span>, y<span class="op">=</span><span class="st">"Delta 13 C (o/oo)"</span>, hue<span class="op">=</span><span class="st">"Species"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -618,8 +630,11 @@ Name: Culmen Length (mm), dtype: float64</code></pre>
 </div>
 </div>
 </div>
+</section>
+<section id="model-creation" class="level2">
+<h2 class="anchored" data-anchor-id="model-creation">Model Creation</h2>
 <p>To get the models to work, I took the highest scoring three models from the previous cross validation tests. Here, I used sklearn’s logistic regression for two of the models and their random forest classifier for the last one.</p>
-<div id="cell-18" class="cell">
+<div id="cell-24" class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>LR_cols_1 <span class="op">=</span> [<span class="st">'Culmen Length (mm)'</span>, <span class="st">'Culmen Depth (mm)'</span>, <span class="st">'Island_Biscoe'</span>, <span class="st">'Island_Dream'</span>, <span class="st">'Island_Torgersen'</span>] <span class="co"># LR</span></span>
@@ -636,7 +651,7 @@ Name: Culmen Length (mm), dtype: float64</code></pre>
 <span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>RFC.fit(X_train[RFC_cols], y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally, the test data is prepared through the same prepare_data function. Then, the models are scored on the test data, with the logistic regression models achieving 100% accuracy!</p>
-<div id="cell-20" class="cell" data-execution_count="14">
+<div id="cell-26" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>test_url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/palmer-penguins/test.csv"</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>test <span class="op">=</span> pd.read_csv(test_url)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -662,7 +677,7 @@ RFC:
 </div>
 </div>
 <p>This provided plot_regions function takes in a model alongside the X and y columns of data and plots the its decision regions, allowing for easy visualization.</p>
-<div id="cell-22" class="cell" data-execution_count="15">
+<div id="cell-28" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -720,7 +735,7 @@ RFC:
 <span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a>      plt.tight_layout()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally, I plotted my two logistic regression models (the models that achieved 100% prediction accuracy) using the plot_regions function.</p>
-<div id="cell-24" class="cell" data-execution_count="17">
+<div id="cell-30" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plot_regions(LR_1, X_train[LR_cols_1], y_train)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>plot_regions(LR_2, X_train[LR_cols_2], y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -739,8 +754,13 @@ RFC:
 </div>
 </div>
 </div>
+</section>
+<section id="discussion" class="level2">
+<h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
+<p>Through the creation of this blog post, I discovered the best sets of prediction parameters for the given dataset and models (culmen length and depth alongside island of origin and sex, respectively) and showed that logistic regression decision boundaries are linear. Further, I showed other correlations that exist in the dataset – like the relation of flipper length and delta 13 C to species – through visualizations of the dataset. In doing this, I improved my skills with dataframes and data cleaning, an essential process for training models. Further, I gained practice with seaborn for visualizing data and learned how to train and cross-validate the prebuilt models from scikit-learn, leading to my first model-based predictions being made on a dataset.</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -2,13 +2,11 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/Logistic/index.html",
       "/posts/perceptron-post/index.html",
       "/posts/bias-replication/bias_replication.html",
       "/posts/optimal-decision-making/optimal.html",
-      "/posts/new-new-test-post/index.html",
-      "/posts/new-test-post/index.html",
-      "/posts/penguin-post/penguin.html",
-      "/posts/example-blog-post/index.html"
+      "/posts/penguin-post/penguin.html"
     ]
   }
 ]

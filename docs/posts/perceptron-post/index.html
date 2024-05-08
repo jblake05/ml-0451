@@ -767,11 +767,17 @@ window.Quarto = {
 <span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>loss <span class="op">=</span> p.loss(X, y).item() <span class="co"># O(np)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+</section>
+<section id="runtime-discussion" class="level2">
+<h2 class="anchored" data-anchor-id="runtime-discussion">Runtime Discussion</h2>
 <p>For the runtime of the perceptron, a single iteration without minibatching will have a runtime of O(n) if n &gt; p and a runtime of O(p) if p &gt; n.&nbsp;The O(n) appears in the loss calculation’s matrix multiplication and the O(p) appears in the gradient calculation. In the minibatch implementation, the runtime is O(kp) (seen in the grad_k calculation step) if kp &gt; n and O(n) (seen in the matrix multiplication) if n &gt; kp.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>In the creation and testing of the perceptron algorithm, I found that – while it seems to work well for linearly separable data – it can be a bit awkward to run on linearly inseparable data. On two dimensional data, the perceptron converged to zero quickly for linearly separable data. While it isn’t possible for this to occur on linearly inseparable data, it did progressively improve over time before plateauing before zero. This ability to achieve zero loss with linearly separable data holds at higher dimensions, as well. Similarly, I found that a minibatch perceptron could converge to zero on linearly separable data (though at slower rates than non-batched perceptrons at higher batch sizes) and to a low non-zero value on inseparable data with a large batch size.</p>
 
 
-</section>
 </section>
 </section>
 

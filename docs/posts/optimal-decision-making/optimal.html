@@ -216,10 +216,10 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>This blog post will explore the data behind loan granting from various perspectives. The data will first be shown “as is” through visualizations and data tables. Then, a model will be trained on the data through the creation of a scoring function and threshold. Finally, more in-depth quantiative analysis will be done on the profits, costs, and biases that are created from the model. Through this study, a profitable model for the bank was found, but this came at the cost of differing acceptance rates across groups.</p>
 </section>
-<section id="part-a-grab-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="part-a-grab-the-data">Part A: Grab the Data</h2>
+<section id="part-b-data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="part-b-data-exploration">Part B: Data Exploration</h2>
 <p>First, the data is converted to a dataframe through pandas and checked using the head() function</p>
-<div id="cell-3" class="cell" data-execution_count="1">
+<div id="cell-3" class="cell" data-execution_count="26">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> combinations</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
@@ -230,9 +230,9 @@ background-size: cover;
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/credit-risk/train.csv"</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df_train <span class="op">=</span> pd.read_csv(url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-4" class="cell" data-execution_count="2">
+<div id="cell-4" class="cell" data-execution_count="27">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 
 
@@ -336,15 +336,12 @@ background-size: cover;
 </div>
 </div>
 </div>
-</section>
-<section id="part-b-explore-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="part-b-explore-the-data">Part B: Explore the Data</h2>
 <p>I first investigated the relationship between personal income, financial history, and loan amounts. I did this by creating a table that groups by income intervals of 10000 and checking credit history and the size of the loan. It shows that loan amounts granted increase as personal income increases, while one’s credit history tends to be higher as income increases, but this isn’t as drastic of an upward trend.</p>
-<div id="cell-7" class="cell" data-execution_count="3">
+<div id="cell-6" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_train[<span class="st">"income_group"</span>] <span class="op">=</span> df_train[<span class="st">"person_income"</span>] <span class="op">//</span> <span class="dv">10000</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df_train.groupby([<span class="st">"income_group"</span>])[[<span class="st">"loan_amnt"</span>, <span class="st">"cb_person_cred_hist_length"</span>]].aggregate(<span class="st">"mean"</span>)[:<span class="dv">20</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <div>
 
 
@@ -468,15 +465,15 @@ background-size: cover;
 </div>
 </div>
 </div>
-<section id="visualizations" class="level3">
-<h3 class="anchored" data-anchor-id="visualizations">Visualizations</h3>
-<p>I then mapped aspects about the loan with respect to whether or not the grantee has previously defaulted on their loan. I mapped this as a seaborn scatterplot using loan interest rate and percent income. This revealed that those with a prior default on history are almost never granted an interest rate lower than 12%. However, previous defaults don’t seem to affect the loan as percentage of income.</p>
-<div id="cell-10" class="cell" data-execution_count="4">
+<section id="data-visualizations" class="level3">
+<h3 class="anchored" data-anchor-id="data-visualizations">Data Visualizations</h3>
+<p>I then mapped aspects about the loan with respect to whether or not the grantee has previously defaulted on their loan. I mapped this as a seaborn scatterplot using loan interest rate and percent income. This revealed that those with a prior default on history are almost never granted an interest rate lower than 12%. Further, it showed that there isn’t much of a relationship between loan as a percentage of income and previous defaults being on file.</p>
+<div id="cell-9" class="cell" data-execution_count="29">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>g1 <span class="op">=</span> sns.scatterplot(data<span class="op">=</span>df_train[:<span class="dv">1000</span>], x<span class="op">=</span><span class="st">"loan_int_rate"</span>, y<span class="op">=</span><span class="st">"loan_percent_income"</span>, hue<span class="op">=</span><span class="st">"cb_person_default_on_file"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>g1.set_title(<span class="st">"Loan Interest Rate Increases with a Previous Default on File"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>g1.set_title(<span class="st">"Relation Between Loan Interest Rate, Percentage of Income, and Previous Defaults"</span>)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>g1.set_xlabel(<span class="st">"Loan Interest Rate"</span>)</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>g1.set_ylabel(<span class="st">"Loan as Percentage of Income"</span>)</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">"Previous Default on File"</span>)</span>
@@ -490,7 +487,7 @@ background-size: cover;
 </div>
 </div>
 <p>Finally, I looked into the impact one’s age and home ownership status has on their loan status (whether or not they default) using a seaborn lineplot. It shows that defaulting on loans for those who rent stay fairly stable (and high) from around 20-70 years old. The default rate is much lower for those with mortgages than those who pay rent, and it tends to go down with age. While the rate of default for mortgages jumps up at 60, there are only 3 datapoints for this, so it may be an outlier. Home ownership default rates are the lowest, also trending downward over time (reaching a 0% default rate at 60). Finally, the “other” category fluctuates wildly, increasing drastically between those in their 20s and 30s, then decreasing even more between those in their 30s and 40s. No data exists on “other” home ownership exists in this data for those above their 40s.</p>
-<div id="cell-12" class="cell" data-execution_count="6">
+<div id="cell-11" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df_train[<span class="st">"age_group"</span>] <span class="op">=</span> df_train[<span class="st">"person_age"</span>] <span class="op">//</span> <span class="dv">10</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># axis limiting information from: https://stackoverflow.com/questions/54822884/how-to-change-the-x-axis-range-in-seaborn</span></span>
@@ -498,10 +495,10 @@ background-size: cover;
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>g2 <span class="op">=</span> sns.barplot(data<span class="op">=</span>df_train, x<span class="op">=</span><span class="st">"age_group"</span>, y<span class="op">=</span><span class="st">"loan_status"</span>, hue<span class="op">=</span><span class="st">"person_home_ownership"</span>, errorbar<span class="op">=</span><span class="va">None</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>g2.set_title(<span class="st">"Loan Status Affected by Home Ownership and Age"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>g2.set_title(<span class="st">"Chance of Default by Age Group and Home Ownership"</span>)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>g2.set_xlabel(<span class="st">"Age Group (Tens of Years)"</span>)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>g2.set_ylabel(<span class="st">"Loan Status (Average Chance of Default)"</span>)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">"Home Ownership Type"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.legend(title<span class="op">=</span><span class="st">"Home Ownership Status"</span>)</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">6</span>)</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -515,10 +512,12 @@ background-size: cover;
 </div>
 </section>
 </section>
-<section id="part-c-build-a-model" class="level2">
-<h2 class="anchored" data-anchor-id="part-c-build-a-model">Part C: Build a Model</h2>
+<section id="part-c-model-creation" class="level2">
+<h2 class="anchored" data-anchor-id="part-c-model-creation">Part C: Model Creation</h2>
+<section id="data-preparation" class="level3">
+<h3 class="anchored" data-anchor-id="data-preparation">Data Preparation</h3>
 <p>I then wanted to create a model to predict whether or not an applicant would default on their loan. To start, I processed the data to drop loan_grade (which was already a prediction) and loan_status (what the model is predicting). Further, I use pd.get_dummies to convert qualitative columns like “person_home_ownership” to become true/false columns for each possible answer of the column (e.g.&nbsp;person_home_ownership_RENT).</p>
-<div id="cell-15" class="cell" data-execution_count="8">
+<div id="cell-15" class="cell" data-execution_count="31">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> LabelEncoder</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>le <span class="op">=</span> LabelEncoder()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>le.fit(df_train[<span class="st">"loan_status"</span>])</span>
@@ -533,9 +532,9 @@ background-size: cover;
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> prepare_data(df_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="9">
+<div id="cell-16" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="32">
 <div>
 
 
@@ -694,8 +693,11 @@ background-size: cover;
 </div>
 </div>
 </div>
-<p>I then used a logistic regression (LR) model from scikit-learn to figure out the most important variables for the model to consider and the weights of their importance. I did this by procedurally iterating through one qualitative column and different pairs of quantitative column and scoring the LR model through cross-validation. The best scoring columns were saved and output for future use.</p>
-<div id="cell-18" class="cell" data-execution_count="10">
+</section>
+<section id="cross-validation-and-parameter-choice" class="level3">
+<h3 class="anchored" data-anchor-id="cross-validation-and-parameter-choice">Cross Validation and Parameter Choice</h3>
+<p>I then used a logistic regression (LR) model from SciKitLearn to figure out the most important variables for the model to consider and the weights of their importance. I did this by procedurally iterating through one qualitative column and different pairs of quantitative column and scoring the LR model through cross-validation. The best scoring columns were saved and output for future use.</p>
+<div id="cell-19" class="cell" data-execution_count="33">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>) <span class="co"># just ignores the convergence warning in this case</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>results_LR <span class="op">=</span> []</span>
@@ -718,11 +720,11 @@ background-size: cover;
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>results_LR.sort(reverse<span class="op">=</span><span class="va">True</span>, key<span class="op">=</span><span class="kw">lambda</span> x : x[<span class="dv">0</span>])</span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(results_LR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[(0.8486483607400082, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.8485174611967847, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_percent_income']), (0.8485174326119376, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_percent_income']), (0.8455491439743476, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_int_rate', 'loan_percent_income']), (0.8317106287322877, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_int_rate', 'loan_percent_income']), (0.8234163351539022, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_int_rate', 'loan_percent_income']), (0.82097141601043, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.8209277669488848, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_percent_income']), (0.8208841369439044, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_percent_income']), (0.8172610552134426, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_int_rate']), (0.8164753721056293, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_int_rate']), (0.8161260462173147, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'loan_int_rate']), (0.8156459065403178, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_int_rate']), (0.8156021431393843, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.8155148926577057, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.8153401439590071, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_int_rate']), (0.8151218795947164, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_percent_income']), (0.8134193089308305, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_percent_income']), (0.8133756979824149, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.8080062917154157, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_amnt']), (0.8080062917154157, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_amnt']), (0.8080062917154157, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_amnt']), (0.8071778170914709, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'loan_int_rate']), (0.8036409282033443, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_int_rate']), (0.8024182590093959, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_int_rate']), (0.802330970414588, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_int_rate']), (0.8022872927681955, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_int_rate']), (0.7987950343546985, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_int_rate']), (0.7984021356310976, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.7966566781682565, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'loan_percent_income']), (0.788929155410192, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_amnt']), (0.7889291172970626, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_amnt']), (0.7888418001174075, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'cb_person_cred_hist_length']), (0.7852621482979962, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_amnt']), (0.7851748787597531, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_amnt']), (0.7851311915850785, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_amnt']), (0.7850875234669684, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'loan_percent_income']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'person_income']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'person_emp_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'person_emp_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_percent_income']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'cb_person_cred_hist_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'person_income']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'person_emp_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'person_emp_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_percent_income']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'loan_percent_income']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'person_income']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'person_emp_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'person_emp_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_percent_income']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'cb_person_cred_hist_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'cb_person_cred_hist_length']), (0.784781922866458, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_amnt']), (0.7846946152150853, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'cb_person_cred_hist_length']), (0.7843018022460259, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'cb_person_cred_hist_length']), (0.778234630332658, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'loan_int_rate'])]</code></pre>
+<pre><code>[(0.8488229950993185, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_percent_income']), (0.8486483607400082, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.8484738026069572, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_percent_income']), (0.8455928025641752, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_int_rate', 'loan_percent_income']), (0.8316669701424602, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_int_rate', 'loan_percent_income']), (0.8313616744469856, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_amnt']), (0.8313612266177142, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'loan_percent_income']), (0.82359095998493, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_int_rate', 'loan_percent_income']), (0.8208840988307748, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.8208404497692298, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_percent_income']), (0.8207968197642493, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_percent_income']), (0.8199676876888209, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_percent_income']), (0.818526754130582, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_percent_income']), (0.8179595259527067, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_int_rate']), (0.8172610552134426, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_int_rate']), (0.816475362577347, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_int_rate']), (0.8160825305517229, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'loan_int_rate']), (0.8156022479504903, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_int_rate']), (0.8154275850063331, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.8154274992517916, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.8153399724499243, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'loan_percent_income']), (0.8152528363076345, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_int_rate']), (0.8151218795947164, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_percent_income']), (0.8146855128469355, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'loan_int_rate']), (0.8135071596942984, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'loan_percent_income']), (0.8134193089308305, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_percent_income']), (0.8133756979824149, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_percent_income', 'cb_person_cred_hist_length']), (0.812721190738014, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'loan_int_rate']), (0.8117169193043094, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_int_rate']), (0.8080935707819414, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'loan_amnt']), (0.8035536110236892, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_int_rate']), (0.8004103450086235, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_amnt']), (0.7985767604621254, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_int_rate']), (0.7984894528107527, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_int_rate', 'cb_person_cred_hist_length']), (0.7968743327224751, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'loan_int_rate']), (0.7925530661012202, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'loan_percent_income']), (0.7907191194799921, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'cb_person_cred_hist_length']), (0.7904572060541563, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'person_income']), (0.7898459476834412, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'loan_amnt']), (0.7896713704938252, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_income', 'person_emp_length']), (0.7894529727335813, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'loan_amnt']), (0.7890163963635881, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'loan_amnt', 'cb_person_cred_hist_length']), (0.7878378621735861, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'person_emp_length']), (0.7868337622489643, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'person_income']), (0.7866591660027835, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_income', 'cb_person_cred_hist_length']), (0.7860043347967822, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'loan_amnt']), (0.7857860609042093, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'person_income']), (0.7853930859543494, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'loan_amnt', 'cb_person_cred_hist_length']), (0.7853930668977847, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'loan_amnt']), (0.7850001586459016, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'loan_amnt']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'person_emp_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'person_emp_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_income', 'cb_person_cred_hist_length']), (0.7849565667540506, ['person_home_ownership_MORTGAGE', 'person_home_ownership_OTHER', 'person_home_ownership_OWN', 'person_home_ownership_RENT', 'person_emp_length', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'person_emp_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_emp_length', 'cb_person_cred_hist_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'person_emp_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_age', 'cb_person_cred_hist_length']), (0.7849565667540506, ['cb_person_default_on_file_N', 'cb_person_default_on_file_Y', 'person_emp_length', 'cb_person_cred_hist_length']), (0.7847382738049129, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'loan_amnt', 'cb_person_cred_hist_length']), (0.7846946247433676, ['loan_intent_DEBTCONSOLIDATION', 'loan_intent_EDUCATION', 'loan_intent_HOMEIMPROVEMENT', 'loan_intent_MEDICAL', 'loan_intent_PERSONAL', 'loan_intent_VENTURE', 'person_age', 'loan_amnt'])]</code></pre>
 </div>
 </div>
 <p>With the columns defined, we can get the weights of each column using LogisticRegression.coef_.</p>
-<div id="cell-20" class="cell" data-execution_count="11">
+<div id="cell-21" class="cell" data-execution_count="34">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> [<span class="st">'person_home_ownership_MORTGAGE'</span>, <span class="st">'person_home_ownership_OTHER'</span>, <span class="st">'person_home_ownership_OWN'</span>,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>         <span class="st">'person_home_ownership_RENT'</span>, <span class="st">'loan_percent_income'</span>, <span class="st">'cb_person_cred_hist_length'</span>]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -730,34 +732,35 @@ background-size: cover;
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>LR.fit(X_train[cols], y_train)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>LR.coef_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>array([[-1.64154192e-01,  4.97682620e-01, -1.20631381e+00,
-         8.71319225e-01,  8.28169156e+00, -4.40583292e-03]])</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<pre><code>array([[-7.67155908e-01, -1.12954673e-01, -1.80828780e+00,
+         2.68210537e-01,  8.27833450e+00, -4.48028544e-03]])</code></pre>
 </div>
 </div>
 <p>A simple linear score function is defined here as the inner product between the values of the relevant columns (X) and the values of w (our weights, defined above). X_train is then given profit, cost, and score columns based on the profit and cost functions provided.</p>
-<div id="cell-22" class="cell" data-execution_count="12">
+<div id="cell-23" class="cell" data-execution_count="35">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> linear_score(w, X):</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> X<span class="op">@</span>w</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-23" class="cell" data-execution_count="13">
+<div id="cell-24" class="cell" data-execution_count="36">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>X_train[<span class="st">"profit"</span>] <span class="op">=</span> X_train[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_train[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">10</span> <span class="op">-</span> X_train[<span class="st">"loan_amnt"</span>]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>X_train[<span class="st">"cost"</span>] <span class="op">=</span> X_train[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_train[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="fl">1.7</span><span class="op">*</span>X_train[<span class="st">"loan_amnt"</span>]</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>X_train[<span class="st">"score"</span>] <span class="op">=</span> linear_score(np.transpose(LR.coef_), X_train[cols])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="part-d-find-a-threshold" class="level2">
-<h2 class="anchored" data-anchor-id="part-d-find-a-threshold">Part D: Find a Threshold</h2>
 <p>The model is then optimized for maximum profit for the bank. This algorithm checks for each threshold value between the minimum and maximum scores in the training data. The profit for each threshold is calculated as 0 if the model predicts a default (the loan being denied), the value of the profit column if the value of loan_status is 0 (no default), and the value of the cost column is the value of loan_status is 1.</p>
-<div id="cell-26" class="cell" data-execution_count="14">
+<div id="cell-26" class="cell" data-execution_count="37">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X_train[<span class="st">"score"</span>].<span class="bu">min</span>(), X_train[<span class="st">"score"</span>].<span class="bu">max</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>(-1.1719610565334115, 7.23941006007273)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="37">
+<pre><code>(-1.7747875900109253, 6.633567528408647)</code></pre>
 </div>
 </div>
-<div id="cell-27" class="cell" data-execution_count="15">
+</section>
+</section>
+<section id="part-d-threshold-choice" class="level2">
+<h2 class="anchored" data-anchor-id="part-d-threshold-choice">Part D: Threshold Choice</h2>
+<div id="cell-28" class="cell" data-execution_count="38">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>max_profit <span class="op">=</span> <span class="bu">float</span>(<span class="st">'-inf'</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>thresh <span class="op">=</span> <span class="op">-</span><span class="fl">1.17</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -768,41 +771,51 @@ background-size: cover;
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        thresh <span class="op">=</span> t</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>max_profit, thresh</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
-<pre><code>(1448.4426481197982, 3.350000000000004)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="38">
+<pre><code>(1447.7771963146645, 2.7500000000000036)</code></pre>
+</div>
+</div>
+<div id="cell-29" class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>sns.scatterplot(data<span class="op">=</span>X_train, x<span class="op">=</span><span class="st">"profit"</span>, y<span class="op">=</span><span class="st">"cost"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="optimal_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
-<section id="part-e-evaluate-your-model-from-the-banks-perspective" class="level2">
-<h2 class="anchored" data-anchor-id="part-e-evaluate-your-model-from-the-banks-perspective">Part E: Evaluate Your Model from the Bank’s Perspective</h2>
+<section id="part-e-evaluating-profit" class="level2">
+<h2 class="anchored" data-anchor-id="part-e-evaluating-profit">Part E: Evaluating Profit</h2>
 <p>With a max profit of $1448 and a threshold of 3.35, I apply the scoring function and threshold to the testing data. This threshold and set of weights achieved a testing profit of $1392.</p>
-<div id="cell-30" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/credit-risk/test.csv"</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>df_test <span class="op">=</span> pd.read_csv(url)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> prepare_data(df_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-32" class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/PhilChodrow/ml-notes/main/data/credit-risk/test.csv"</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df_test <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> prepare_data(df_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-31" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>thresh <span class="op">=</span> <span class="fl">3.35</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"profit"</span>] <span class="op">=</span> X_test[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_test[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">10</span> <span class="op">-</span> X_test[<span class="st">"loan_amnt"</span>]</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"cost"</span>] <span class="op">=</span> X_test[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_test[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="fl">1.7</span><span class="op">*</span>X_test[<span class="st">"loan_amnt"</span>]</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"score"</span>] <span class="op">=</span> linear_score(np.transpose(LR.coef_), X_test[cols])</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># if the score is under the threshold, the person is predicted not to default, so the loan is given</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>((X_test[<span class="st">"score"</span>] <span class="op">&lt;</span> thresh) <span class="op">*</span> ((y_test <span class="op">==</span> <span class="dv">0</span>) <span class="op">*</span> X_test[<span class="st">"profit"</span>] <span class="op">+</span> (y_test <span class="op">==</span> <span class="dv">1</span>) <span class="op">*</span> X_test[<span class="st">"cost"</span>])).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>1392.1021914117252</code></pre>
+<div id="cell-33" class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>thresh <span class="op">=</span> <span class="fl">3.35</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"profit"</span>] <span class="op">=</span> X_test[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_test[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">10</span> <span class="op">-</span> X_test[<span class="st">"loan_amnt"</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"cost"</span>] <span class="op">=</span> X_test[<span class="st">"loan_amnt"</span>]<span class="op">*</span>(<span class="dv">1</span> <span class="op">+</span> <span class="fl">0.25</span><span class="op">*</span><span class="fl">0.01</span><span class="op">*</span>X_test[<span class="st">"loan_int_rate"</span>])<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="fl">1.7</span><span class="op">*</span>X_test[<span class="st">"loan_amnt"</span>]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"score"</span>] <span class="op">=</span> linear_score(np.transpose(LR.coef_), X_test[cols])</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co"># if the score is under the threshold, the person is predicted not to default, so the loan is given</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>((X_test[<span class="st">"score"</span>] <span class="op">&lt;</span> thresh) <span class="op">*</span> ((y_test <span class="op">==</span> <span class="dv">0</span>) <span class="op">*</span> X_test[<span class="st">"profit"</span>] <span class="op">+</span> (y_test <span class="op">==</span> <span class="dv">1</span>) <span class="op">*</span> X_test[<span class="st">"cost"</span>])).mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<pre><code>1057.8815263645538</code></pre>
 </div>
 </div>
 <p>I also added a “loan_granted” column, which just negates the prediction of the model (i.e.&nbsp;if no default is predicted, the loan is granted). This makes some of the logic easier by preventing negations of the prediction column later on.</p>
-<div id="cell-33" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prediction is whether or not a default will occur</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"pred"</span>] <span class="op">=</span> X_test[<span class="st">"score"</span>] <span class="op">&gt;</span> thresh</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"loan_granted"</span>] <span class="op">=</span> <span class="op">~</span>X_test[<span class="st">"pred"</span>]</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>X_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div id="cell-35" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># prediction is whether or not a default will occur</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"pred"</span>] <span class="op">=</span> X_test[<span class="st">"score"</span>] <span class="op">&gt;</span> thresh</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"loan_granted"</span>] <span class="op">=</span> <span class="op">~</span>X_test[<span class="st">"pred"</span>]</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>X_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
 <div>
 
 
@@ -854,7 +867,7 @@ background-size: cover;
 <td>False</td>
 <td>465.367227</td>
 <td>-578.539601</td>
-<td>1.01933</td>
+<td>0.415856</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -878,7 +891,7 @@ background-size: cover;
 <td>False</td>
 <td>4847.780062</td>
 <td>-9185.361205</td>
-<td>2.197884</td>
+<td>1.593239</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -902,7 +915,7 @@ background-size: cover;
 <td>False</td>
 <td>1091.841800</td>
 <td>-1807.236578</td>
-<td>1.341786</td>
+<td>0.738029</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -926,7 +939,7 @@ background-size: cover;
 <td>False</td>
 <td>4972.214553</td>
 <td>-7084.777554</td>
-<td>1.051665</td>
+<td>0.447713</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -950,7 +963,7 @@ background-size: cover;
 <td>False</td>
 <td>3331.859215</td>
 <td>-4032.764115</td>
-<td>1.520637</td>
+<td>0.917036</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -998,7 +1011,7 @@ background-size: cover;
 <td>False</td>
 <td>3210.941787</td>
 <td>-11691.427669</td>
-<td>1.718606</td>
+<td>1.11446</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -1022,7 +1035,7 @@ background-size: cover;
 <td>False</td>
 <td>4331.281644</td>
 <td>-7790.401145</td>
-<td>3.233357</td>
+<td>2.628605</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -1046,7 +1059,7 @@ background-size: cover;
 <td>False</td>
 <td>2083.140437</td>
 <td>-6694.483153</td>
-<td>0.602441</td>
+<td>-0.000495</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -1070,7 +1083,7 @@ background-size: cover;
 <td>False</td>
 <td>1508.058449</td>
 <td>-3782.525248</td>
-<td>0.567981</td>
+<td>-0.035547</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -1094,7 +1107,7 @@ background-size: cover;
 <td>False</td>
 <td>4827.369675</td>
 <td>-5745.680644</td>
-<td>2.156737</td>
+<td>1.552421</td>
 <td>False</td>
 <td>True</td>
 </tr>
@@ -1106,23 +1119,23 @@ background-size: cover;
 </div>
 </div>
 </section>
-<section id="part-f-evaluate-your-model-from-the-borrowers-perspective" class="level2">
-<h2 class="anchored" data-anchor-id="part-f-evaluate-your-model-from-the-borrowers-perspective">Part F: Evaluate Your Model from the Borrower’s Perspective</h2>
+<section id="part-f-evaluating-from-a-borrowers-perspective" class="level2">
+<h2 class="anchored" data-anchor-id="part-f-evaluating-from-a-borrowers-perspective">Part F: Evaluating from a Borrower’s Perspective</h2>
 <p>With a complete model, it’s important to do analysis on its impact. First, we can see through the creation of an age group column that acceptance rates tend to rise from ages 20 to 44. After this, we see a dip at 45-54 year olds before the rate rises again. Another large outlier is those in group 13 (the 65-69 year old age range), with an acceptance rate of 60%.</p>
-<div id="cell-36" class="cell" data-execution_count="19">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F1</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"age_group"</span>] <span class="op">=</span> X_test[<span class="st">"person_age"</span>] <span class="op">//</span> <span class="dv">5</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"age_group"</span>)[<span class="st">"loan_granted"</span>].mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div id="cell-39" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F1</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"age_group"</span>] <span class="op">=</span> X_test[<span class="st">"person_age"</span>] <span class="op">//</span> <span class="dv">5</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"age_group"</span>)[<span class="st">"loan_granted"</span>].mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="43">
 <pre><code>age_group
-4     0.909465
-5     0.916070
-6     0.926056
-7     0.940758
-8     0.942408
-9     0.913043
-10    0.906250
-11    0.900000
+4     0.954733
+5     0.966223
+6     0.967136
+7     0.981043
+8     0.973822
+9     0.971014
+10    0.937500
+11    1.000000
 12    1.000000
 13    0.600000
 14    1.000000
@@ -1130,9 +1143,9 @@ Name: loan_granted, dtype: float64</code></pre>
 </div>
 </div>
 <p>One reason for these large flucuations and 100% acceptance rates, however, could be the low count of applicants in the higher age groups. Although group 13 has the lowest acceptance rate, they also have the lowest sample size with just 5 people. This rise is still notable, especially in groups with larger sample sizes like those in the 20-24 range compared to those in the 40-44 range.</p>
-<div id="cell-38" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"age_group"</span>)[<span class="st">"age_group"</span>].count()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div id="cell-41" class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"age_group"</span>)[<span class="st">"age_group"</span>].count()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
 <pre><code>age_group
 4     2187
 5     1954
@@ -1149,78 +1162,78 @@ Name: age_group, dtype: int64</code></pre>
 </div>
 </div>
 <p>The next test compares the model’s acceptance of those based on loan intent, comparing to its average acceptance rate. Here, we can see that loans for debt consolidaiton, medical expenses, and personal expenses are denied more often than average (where education, home improvement, and venture expenses are approved more often). Here, it is also notable that the model approves loans (i.e.&nbsp;sees no default) much more often than the data dictates that no default will occur.</p>
-<div id="cell-40" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F2</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>intent_cols <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> X_train.columns <span class="cf">if</span> <span class="st">"loan_intent"</span> <span class="kw">in</span> col ]</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>model_average <span class="op">=</span> X_test[<span class="st">"loan_granted"</span>].mean()</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Model average acceptance: </span><span class="sc">{</span><span class="bu">round</span>(model_average, <span class="dv">6</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span> <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> intent <span class="kw">in</span> intent_cols:</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    intent_count <span class="op">=</span> X_test[intent].<span class="bu">sum</span>()</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    model_score <span class="op">=</span> (X_test[intent] <span class="op">&amp;</span> X_test[<span class="st">"loan_granted"</span>]).<span class="bu">sum</span>()<span class="op">/</span>intent_count</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> (X_test[intent] <span class="op">&amp;</span> <span class="op">~</span>y_test).<span class="bu">sum</span>()<span class="op">/</span>intent_count</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">sum</span> <span class="op">+=</span> intent_count</span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>intent[<span class="dv">12</span>:]<span class="sc">}</span><span class="ss">:'</span>)</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Model grant amount: </span><span class="sc">{</span><span class="bu">round</span>(model_score, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Actual grant amount: </span><span class="sc">{</span><span class="bu">round</span>(result, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Model</span><span class="ch">\'</span><span class="ss">s group grant to averge grant ratio: </span><span class="sc">{</span><span class="bu">round</span>(model_score<span class="op">/</span>model_average, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-43" class="cell" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F2</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>intent_cols <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> X_train.columns <span class="cf">if</span> <span class="st">"loan_intent"</span> <span class="kw">in</span> col ]</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>model_average <span class="op">=</span> X_test[<span class="st">"loan_granted"</span>].mean()</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Model average acceptance: </span><span class="sc">{</span><span class="bu">round</span>(model_average, <span class="dv">6</span>)<span class="sc">}</span><span class="ch">\n</span><span class="ss">'</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span> <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> intent <span class="kw">in</span> intent_cols:</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    intent_count <span class="op">=</span> X_test[intent].<span class="bu">sum</span>()</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    model_score <span class="op">=</span> (X_test[intent] <span class="op">&amp;</span> X_test[<span class="st">"loan_granted"</span>]).<span class="bu">sum</span>()<span class="op">/</span>intent_count</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> (X_test[intent] <span class="op">&amp;</span> <span class="op">~</span>y_test).<span class="bu">sum</span>()<span class="op">/</span>intent_count</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">sum</span> <span class="op">+=</span> intent_count</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'</span><span class="sc">{</span>intent[<span class="dv">12</span>:]<span class="sc">}</span><span class="ss">:'</span>)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Model grant amount: </span><span class="sc">{</span><span class="bu">round</span>(model_score, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Actual grant amount: </span><span class="sc">{</span><span class="bu">round</span>(result, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Model</span><span class="ch">\'</span><span class="ss">s group grant to averge grant ratio: </span><span class="sc">{</span><span class="bu">round</span>(model_score<span class="op">/</span>model_average, <span class="dv">6</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Model average acceptance: 0.917466
+<pre><code>Model average acceptance: 0.963008
 
 DEBTCONSOLIDATION:
-Model grant amount: 0.904867
+Model grant amount: 0.961283
 Actual grant amount: 0.712389
-Model's group grant to averge grant ratio: 0.986267
+Model's group grant to averge grant ratio: 0.998209
 
 EDUCATION:
-Model grant amount: 0.922619
+Model grant amount: 0.966837
 Actual grant amount: 0.832483
-Model's group grant to averge grant ratio: 1.005616
+Model's group grant to averge grant ratio: 1.003976
 
 HOMEIMPROVEMENT:
-Model grant amount: 0.962662
+Model grant amount: 0.983766
 Actual grant amount: 0.75
-Model's group grant to averge grant ratio: 1.049262
+Model's group grant to averge grant ratio: 1.021555
 
 MEDICAL:
-Model grant amount: 0.898416
+Model grant amount: 0.951538
 Actual grant amount: 0.71575
-Model's group grant to averge grant ratio: 0.979235
+Model's group grant to averge grant ratio: 0.988089
 
 PERSONAL:
-Model grant amount: 0.912826
+Model grant amount: 0.957916
 Actual grant amount: 0.779559
-Model's group grant to averge grant ratio: 0.994942
+Model's group grant to averge grant ratio: 0.994712
 
 VENTURE:
-Model grant amount: 0.920124
+Model grant amount: 0.96473
 Actual grant amount: 0.853734
-Model's group grant to averge grant ratio: 1.002897
+Model's group grant to averge grant ratio: 1.001788
 </code></pre>
 </div>
 </div>
 <p>Finally, I checked how the model grants loans to those of different income groups. I did this by (again) dividing the incomes into groups of 10000. When sorting by these groups, it becomes clear that the likelihood of being granted a loan by this model rises drastically as one’s income does. Above an income of 110000, this likelihood is 100% (the amount of income groups included is truncated for readability).</p>
-<div id="cell-42" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F3</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"income_group"</span>] <span class="op">=</span> X_test[<span class="st">"person_income"</span>] <span class="op">//</span> <span class="dv">10000</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"income_group"</span>)[<span class="st">"loan_granted"</span>].mean()[:<span class="dv">20</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div id="cell-45" class="cell" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># F3</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"income_group"</span>] <span class="op">=</span> X_test[<span class="st">"person_income"</span>] <span class="op">//</span> <span class="dv">10000</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>X_test.groupby(<span class="st">"income_group"</span>)[<span class="st">"loan_granted"</span>].mean()[:<span class="dv">20</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="46">
 <pre><code>income_group
-0     0.636364
-1     0.775194
-2     0.805195
-3     0.827586
-4     0.890346
-5     0.939153
-6     0.959762
-7     0.962891
-8     0.976401
-9     0.992883
-10    0.994737
+0     0.727273
+1     0.914729
+2     0.906926
+3     0.908788
+4     0.955900
+5     0.982804
+6     0.983607
+7     0.986328
+8     0.985251
+9     1.000000
+10    1.000000
 11    1.000000
 12    1.000000
 13    1.000000

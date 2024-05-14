@@ -8,7 +8,7 @@
 
 <meta name="author" content="Jeff Blake">
 <meta name="dcterms.date" content="2024-05-12">
-<meta name="description" content="Creating a model for logistic regression in python.">
+<meta name="description" content="Creating a model for logistic regression in Python.">
 
 <title>My Awesome CSCI 0451 Blog - Logistic Regression</title>
 <style>
@@ -171,7 +171,7 @@ background-size: cover;
       <h1 class="title">Logistic Regression</h1>
                   <div>
         <div class="description">
-          Creating a model for logistic regression in python.
+          Creating a model for logistic regression in Python.
         </div>
       </div>
                 </div>
@@ -209,7 +209,7 @@ background-size: cover;
 
 
 
-<div id="cell-1" class="cell" data-metadata="{}" data-execution_count="63">
+<div id="cell-1" class="cell" data-metadata="{}" data-execution_count="57">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext autoreload</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>autoreload <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -230,14 +230,14 @@ background-size: cover;
 <section id="data-creation" class="level2">
 <h2 class="anchored" data-anchor-id="data-creation">Data Creation</h2>
 <p>First, I import my model alongside torch, numpy, and matplotlib.</p>
-<div id="cell-7" class="cell" data-metadata="{}" data-execution_count="64">
+<div id="cell-7" class="cell" data-metadata="{}" data-execution_count="58">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> logistic <span class="im">import</span> LogisticRegression, GradientDescentOptimizer</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Then, using the classification_data method provided in the assignment, I generate linearly inseparable data to test the logstic regression model on.</p>
-<div id="cell-9" class="cell" data-metadata="{}" data-execution_count="65">
+<div id="cell-9" class="cell" data-metadata="{}" data-execution_count="59">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classification_data(n_points <span class="op">=</span> <span class="dv">300</span>, noise <span class="op">=</span> <span class="fl">0.2</span>, p_dims <span class="op">=</span> <span class="dv">2</span>):</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> torch.arange(n_points) <span class="op">&gt;=</span> <span class="bu">int</span>(n_points<span class="op">/</span><span class="dv">2</span>)</span>
@@ -253,7 +253,7 @@ background-size: cover;
 <section id="visualization-methods" class="level2">
 <h2 class="anchored" data-anchor-id="visualization-methods">Visualization Methods</h2>
 <p>Next, I bring in methods from the perceptron assignment to plot the data and draw lines for decision boundaries. This will be important for the first experiment to show the model’s weight vector changing over time.</p>
-<div id="cell-12" class="cell" data-metadata="{}" data-execution_count="66">
+<div id="cell-12" class="cell" data-metadata="{}" data-execution_count="60">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># from perceptron lecture</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_data(X, y, ax):</span>
@@ -265,7 +265,7 @@ background-size: cover;
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        ax.scatter(X[ix,<span class="dv">0</span>], X[ix,<span class="dv">1</span>], s <span class="op">=</span> <span class="dv">20</span>,  c <span class="op">=</span> y[ix], facecolors <span class="op">=</span> <span class="st">"none"</span>, edgecolors <span class="op">=</span> <span class="st">"darkgrey"</span>, cmap <span class="op">=</span> <span class="st">"BrBG"</span>, vmin <span class="op">=</span> <span class="op">-</span><span class="dv">2</span>, vmax <span class="op">=</span> <span class="dv">2</span>, alpha <span class="op">=</span> <span class="fl">0.5</span>, marker <span class="op">=</span> markers[i])</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ax.<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="vs">r"$x_1$"</span>, ylabel <span class="op">=</span> <span class="vs">r"$x_2$"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-13" class="cell" data-metadata="{}" data-execution_count="67">
+<div id="cell-13" class="cell" data-metadata="{}" data-execution_count="61">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> draw_line(w, x_min, x_max, ax, <span class="op">**</span>kwargs):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    w_ <span class="op">=</span> w.flatten()</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> torch.linspace(x_min, x_max, <span class="dv">101</span>)</span>
@@ -273,7 +273,7 @@ background-size: cover;
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    l <span class="op">=</span> ax.plot(x, y, <span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>These next two methods, also taken from the perceptron assignment, are adapted to better suit these experiments. The plot_decisions function only shows the first and last five decision boundary changes (instead of all changes like in the perceptron). Both were also changed to take in their necessary vectors in order to reduce the amount of times they’re repeated in the code.</p>
-<div id="cell-15" class="cell" data-metadata="{}" data-execution_count="68">
+<div id="cell-15" class="cell" data-metadata="{}" data-execution_count="62">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plots the first and last 5 iterations of the decision boundary</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_decisions(X, y, weight_vec, loss_vec):</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># set up the figure</span></span>
@@ -302,7 +302,7 @@ background-size: cover;
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>                current_ax <span class="op">+=</span> <span class="dv">1</span></span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        fig.suptitle(<span class="st">"LR Decision Boundaries over Time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-16" class="cell" data-metadata="{}" data-execution_count="69">
+<div id="cell-16" class="cell" data-metadata="{}" data-execution_count="63">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_loss(loss_vec):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    plt.plot(loss_vec, color <span class="op">=</span> <span class="st">"slategrey"</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    plt.scatter(torch.arange(<span class="bu">len</span>(loss_vec)), loss_vec, color <span class="op">=</span> <span class="st">"slategrey"</span>)</span>
@@ -313,7 +313,7 @@ background-size: cover;
 <section id="training-method" class="level2">
 <h2 class="anchored" data-anchor-id="training-method">Training Method</h2>
 <p>This training method takes in the data X, the target values y, the learning rate alpha, and the momentum value beta (alongside an optional num_steps parameter). It then runs the optimizer on the model for num_steps amount of time, updating the model’s weight vector each step. Further, there is included code to keep track of the weight and loss changes. The model, its losses, and its weights are returned for later use and visualization.</p>
-<div id="cell-19" class="cell" data-execution_count="70">
+<div id="cell-19" class="cell" data-execution_count="64">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_LR(X, y, alpha, beta, num_steps<span class="op">=</span><span class="dv">100</span>): </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    LR <span class="op">=</span> LogisticRegression() </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">=</span> GradientDescentOptimizer(LR)</span>
@@ -332,17 +332,18 @@ background-size: cover;
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (prev_loss <span class="op">!=</span> loss):</span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>            loss_vec.append(loss)</span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>            weight_vec.append(LR.w)</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> LR, (loss_vec, weight_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> LR, (loss_vec, weight_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="part-b-experiments" class="level2">
 <h2 class="anchored" data-anchor-id="part-b-experiments">Part B: Experiments</h2>
 <p>For the first experiment, the training method is run with two dimensional data, a learning rate of 0.1, and no momentum. To achieve a low loss value, the training loop is run for 1000 steps.</p>
-<div id="cell-22" class="cell" data-metadata="{}" data-execution_count="71">
+<div id="cell-22" class="cell" data-metadata="{}" data-execution_count="65">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>LR, (loss_vec, weight_vec) <span class="op">=</span> train_LR(X, y, <span class="fl">0.1</span>, <span class="fl">0.0</span>, num_steps<span class="op">=</span><span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Plotting the decision boundaries, we can see a significant increase in accuracy over time with a decision boundary that more cleanly separates the data.</p>
-<div id="cell-24" class="cell" data-metadata="{}" data-execution_count="72">
+<div id="cell-24" class="cell" data-metadata="{}" data-execution_count="66">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plot_decisions(X, y, weight_vec, loss_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -353,7 +354,7 @@ background-size: cover;
 </div>
 </div>
 <p>If we plot the loss over time, we similarly see its reduction. This plot makes it clear how the loss decreases in a logistic manner, starting to plateau near the minimum loss value (since the data is linearly inseparable, the minimum is not 0).</p>
-<div id="cell-26" class="cell" data-metadata="{}" data-execution_count="73">
+<div id="cell-26" class="cell" data-metadata="{}" data-execution_count="67">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plot_loss(loss_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -364,10 +365,10 @@ background-size: cover;
 </div>
 </div>
 <p>For the next experiment, I used the same data and learning rate, but changed the momentum from 0 to 0.9. Here, we can see that the loss reaches a low value much faster than the model without momentum (in 100 steps rather than 1000).</p>
-<div id="cell-28" class="cell" data-metadata="{}" data-execution_count="74">
+<div id="cell-28" class="cell" data-metadata="{}" data-execution_count="68">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>LR, (loss_vec, weight_vec) <span class="op">=</span> train_LR(X, y, <span class="fl">0.1</span>, <span class="fl">0.9</span>, num_steps<span class="op">=</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-29" class="cell" data-metadata="{}" data-execution_count="75">
+<div id="cell-29" class="cell" data-metadata="{}" data-execution_count="69">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_loss(loss_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -377,42 +378,91 @@ background-size: cover;
 </div>
 </div>
 </div>
-<p>Finally, this experiment is made to show the effect on high-dimensional data. In particular, this test was for overfitting on data where the number of points is half the amount of dimensions (p == 2n). I first created new data (training and testing), both with 100 dimensions and 50 points of data.</p>
-<div id="cell-31" class="cell" data-metadata="{}" data-execution_count="76">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, this experiment is made to show the effect on high-dimensional data. Since the experiment intends to test accuracy, I first made a function that determines a model’s accuracy (rather than loss) by comparing the model’s prediction results to the y target data. Then, I made a separate training loop that stops once the accuracy on the training data is 100%.</p>
+<div id="cell-31" class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> accuracy(model, X, y):</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="fl">1.0</span> <span class="op">*</span> (model.predict(X) <span class="op">==</span> y)).mean()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_LR_acc(X, y, alpha, beta): </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    LR <span class="op">=</span> LogisticRegression() </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    opt <span class="op">=</span> GradientDescentOptimizer(LR)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize for main loop</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    acc_vec <span class="op">=</span> []</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (<span class="va">True</span>):</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        opt.step(X, y, alpha, beta)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        acc <span class="op">=</span> accuracy(LR, X, y)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        acc_vec.append(acc)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (accuracy(LR, X, y) <span class="op">==</span> <span class="fl">1.</span>):</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> LR, acc_vec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Since the goal of this experiment was to try to get an accuracy of 100%, I set the number of steps to 25000 to give plenty of time for loss reduction. I kept the learning rate the same, and experimented with the momentum to get low loss values.</p>
-<div id="cell-33" class="cell" data-metadata="{}" data-execution_count="77">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>LR, (loss_vec, weight_vec) <span class="op">=</span> train_LR(X_train, y_train, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="dv">25000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Since this test was for overfitting on data where the number of points is half the amount of dimensions (p == 2n), I then created new data (training and testing), both with 100 dimensions and 50 points of data.</p>
+<div id="cell-33" class="cell" data-execution_count="71">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-34" class="cell" data-metadata="{}" data-execution_count="78">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>plot_loss(loss_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next, I trained the model on the training data using the new accuracy-halting training function.</p>
+<div id="cell-35" class="cell" data-metadata="{}" data-execution_count="72">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>LR, acc_vec <span class="op">=</span> train_LR_acc(X_train, y_train, <span class="fl">0.1</span>, <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can then check the accuracy of the model on the training and testing data by calling the accuracy function. Of course, since the function ensured that training accuracy is equal to 100 before returning, the first function call returns 1.</p>
+<div id="cell-37" class="cell" data-execution_count="73">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>accuracy(LR, X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="73">
+<pre><code>tensor(1.)</code></pre>
+</div>
+</div>
+<p>Here, we can see that a small amount of overfitting has occurred, the model is not 100% accurate on both the training and testing data:</p>
+<div id="cell-39" class="cell" data-execution_count="74">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>accuracy(LR, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="74">
+<pre><code>tensor(0.9400)</code></pre>
+</div>
+</div>
+<p>I also adapted the plot_loss function to plot accuracy over time:</p>
+<div id="cell-41" class="cell" data-execution_count="75">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_acc(acc_vec):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    plt.plot(acc_vec, color <span class="op">=</span> <span class="st">"slategrey"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    plt.scatter(torch.arange(<span class="bu">len</span>(acc_vec)), acc_vec, color <span class="op">=</span> <span class="st">"slategrey"</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    labs <span class="op">=</span> plt.gca().<span class="bu">set</span>(xlabel <span class="op">=</span> <span class="st">"LR Iteration (Updates Only)"</span>, ylabel <span class="op">=</span> <span class="st">"accuracy"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"LR Accuracy Iterations over Time"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For reference, we can see how the accuracy increases over time, noting that it does not take many iterations for the model to achieve 100% accuracy on this low-size training data.</p>
+<div id="cell-43" class="cell" data-metadata="{}" data-execution_count="76">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot_acc(acc_vec)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="index_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>This training successfully created a model with an extremely high accuracy on the training data. As is seen below, however, I don’t think the effects of overfitting are very pronounced here. On the training data, the model achieves an accuracy of 99.97%. On the testing data, it changes to 99.91%. While this is a difference, I think that the performance at the test data is very good considering the relative lack of data and high dimensionality.</p>
-<div id="cell-36" class="cell" data-execution_count="79">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>loss_vec[<span class="bu">len</span>(loss_vec) <span class="op">-</span> <span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="79">
-<pre><code>tensor(0.0003)</code></pre>
+<p>As we increase the amount of noise in the data (the default being 0.2), the level of overfitting to the training data increases. As we can see here, when the model achieves 100% accuracy on the training data, it only yields 62% accuracy on the testing data.</p>
+<div id="cell-45" class="cell" data-execution_count="97">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>X_train, y_train <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>, noise<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>X_test, y_test <span class="op">=</span> classification_data(p_dims <span class="op">=</span> <span class="dv">100</span>, n_points <span class="op">=</span> <span class="dv">50</span>, noise<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>LR, acc_vec <span class="op">=</span> train_LR_acc(X_train, y_train, <span class="fl">0.1</span>, <span class="fl">0.8</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>accuracy(LR, X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="97">
+<pre><code>tensor(1.)</code></pre>
 </div>
 </div>
-<div id="cell-37" class="cell" data-execution_count="80">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>LR.loss(X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="80">
-<pre><code>tensor(0.0009)</code></pre>
+<div id="cell-46" class="cell" data-execution_count="98">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>accuracy(LR, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="98">
+<pre><code>tensor(0.6200)</code></pre>
 </div>
 </div>
 </section>
 <section id="discussion" class="level2">
 <h2 class="anchored" data-anchor-id="discussion">Discussion:</h2>
-<p>Over the course of this blog post, I built a custom logistic regression model and performed experiments to figure out how it performs under different parameters. In doing so, I found that adding momentum drastically increases the speed of the model. For instance, a model with no momentum achieved a similar loss with 1000 training steps compared to a model using momentum with 100 steps. I also tested the model’s behavior on data where the number of dimensions is double the number of data points. While there was an increase in loss between the training data and the testing data, I found that the model had very little overfitting in this instance. In the process of making this model, I learned more about gradient functions and step functions and got to practice the full pipeline of creating, training, and testing models in Python.</p>
+<p>Over the course of this blog post, I built a custom logistic regression model and performed experiments to figure out how it performs under different parameters. In doing so, I found that adding momentum drastically increases the speed of the model. For instance, a model with no momentum achieved a similar loss with 1000 training steps compared to a model using momentum with 100 steps. I also tested the model’s behavior on data where the number of dimensions is double the number of data points. In doing so, I found that the amount of overfitting is often dependent on the amount of noise in the data. While there is some overfitting in less noisy data, the amount of overfitting (and resulting lack of accuracy on the testing data) drastically increases when noise does. In the process of making this model, I learned more about gradient functions and step functions and got to practice the full pipeline of creating, training, and testing models in Python.</p>
 
 
 </section>

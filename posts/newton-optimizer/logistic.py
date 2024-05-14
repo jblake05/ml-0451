@@ -123,6 +123,27 @@ class LogisticRegression(LinearModel):
         s = self.score(X)
 
         return torch.mean((self.sigmoid(s) - y)[:, None]*X, axis=0)
+    
+    def hessian(self, X, s):
+        diagonal = torch.diag(self.sigmoid(s)*(1-self.sigmoid(s)))
+
+        return torch.matmul(torch.matmul(torch.t(X), diagonal), X)
+
+class NewtonOptimizer:
+    
+    def __init__(self, model):
+        self.model = model
+    
+    def diagonal(self, s):
+        self.model.sigmoid(s)*self.model.sigmoid()
+
+    def step(self, X, y, alpha):
+        grad = self.model.grad(X, y)
+        s = self.model.score(X)
+
+        hessian = self.model.hessian(X, s)
+
+        self.model.w -= torch.matmul(alpha*torch.inverse(hessian), grad)
 
 class GradientDescentOptimizer:
     def __init__(self, model):

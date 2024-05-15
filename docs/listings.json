@@ -3,6 +3,7 @@
     "listing": "/index.html",
     "items": [
       "/posts/newton-optimizer/index.html",
+      "/posts/genre-deep-learning/genre_learning.html",
       "/posts/Logistic/index.html",
       "/posts/perceptron-post/index.html",
       "/posts/bias-replication/bias_replication.html",

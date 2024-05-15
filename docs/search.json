@@ -140,20 +140,6 @@
     "text": "Discussion:\nOver the course of this blog post, I built a custom logistic regression model and performed experiments to figure out how it performs under different parameters. In doing so, I found that adding momentum drastically increases the speed of the model. For instance, a model with no momentum achieved a similar loss with 1000 training steps compared to a model using momentum with 100 steps. I also tested the model’s behavior on data where the number of dimensions is double the number of data points. In doing so, I found that the amount of overfitting is often dependent on the amount of noise in the data. While there is some overfitting in less noisy data, the amount of overfitting (and resulting lack of accuracy on the testing data) drastically increases when noise does. In the process of making this model, I learned more about gradient functions and step functions and got to practice the full pipeline of creating, training, and testing models in Python."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "My Awesome CSCI 0451 Blog",
-    "section": "",
-    "text": "Logistic Regression\n\n\n\n\n\nCreating a model for logistic regression in Python.\n\n\n\n\n\nMay 12, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nPerceptron\n\n\n\n\n\nCreating a perceptron implementation and experimenting on its performance on different datasets (linearly separable/non-separable), alongside experiments on minibatch sizes\n\n\n\n\n\nApr 28, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nBias Replication Study\n\n\n\n\n\nReplicating a study on the biases of predictive healthcare models\n\n\n\n\n\nApr 15, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\n\"Optimal\" Decision Making\n\n\n\n\n\nMaking “optimal” decisions based on loan-default data and model training. The definition of optimal, though, becomes flawed with profit incentives.\n\n\n\n\n\nMar 27, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nClassifying Palmer Penguins\n\n\n\n\n\nHow I made models that could predict the species from the Palmer Penguins dataset.\n\n\n\n\n\nFeb 28, 2023\n\n\nJeff Blake\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Testing quarto!"
-  },
-  {
     "objectID": "posts/bias-replication/bias_replication.html",
     "href": "posts/bias-replication/bias_replication.html",
     "title": "Bias Replication Study",
@@ -173,6 +159,27 @@
     "title": "Bias Replication Study",
     "section": "Discussion",
     "text": "Discussion\nIn the process of replicating this study, I confirmed the findings that black patients are more likely to be placed in lower risk percentiles given equal prevalence of chronic illness when compared to white patients. I also confirmed that, while costs are relatively similar between patients of the same risk percentile and different races, costs are disparate (black patients have less cost) when comparing between chronic illness. This was then quantified through a model, with a prediction of black patients having 75% of the cost of white patients. With the risk score being calculated with respect to cost, then, disparate outcomes across races are seen considering a more realistic risk variable like chronic illness count.\nAs such, the discrimination criteria of calibration bias is present in the formation of the risk score. This is seen through the dissection of risk score when compared against chronic illness versus cost. While there isn’t much bias in calculating risk score across race when cost is considering factor, there is bias when considering risk score in relation to number of chronic illness. That is to say, those with similar risk scores will have similar costs across race (the second graph in the blog post and figure 3A in the study), but will have dissimilar numbers of chronic illnesses, with black patients having more chronic illnesses at similar risk scores on average (the first graph and figure 1 in the study). The model is then calibrated to the variable of cost rather than health outcome, a fact that is mentioned at the beginning of the study: “…assessing how well the algorithmic risk score is calibrated across race for health outcomes \\(H_{i,t}\\). We also ask how well the algorithm is calibrated for costs \\(C_{i,t}\\).”\nThrough this blog post, I improved my graphing skills, especially when needing to graph different groups on the same graph. I also improved my ability in modelling with polynomial datasets and transforming data to be more useful to my models and graphs (log-transforms, qcuts, etc.)."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Testing quarto!"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Awesome CSCI 0451 Blog",
+    "section": "",
+    "text": "Genre Deep Learning\n\n\n\n\n\nCreating a 3 deep learning models that predict the genre of a song based on spotify data and lyrics.\n\n\n\n\n\nMay 15, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nLogistic Regression\n\n\n\n\n\nCreating a model for logistic regression in Python.\n\n\n\n\n\nMay 12, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nPerceptron\n\n\n\n\n\nCreating a perceptron implementation and experimenting on its performance on different datasets (linearly separable/non-separable), alongside experiments on minibatch sizes\n\n\n\n\n\nApr 28, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nBias Replication Study\n\n\n\n\n\nReplicating a study on the biases of predictive healthcare models\n\n\n\n\n\nApr 15, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\n\"Optimal\" Decision Making\n\n\n\n\n\nMaking “optimal” decisions based on loan-default data and model training. The definition of optimal, though, becomes flawed with profit incentives.\n\n\n\n\n\nMar 27, 2024\n\n\nJeff Blake\n\n\n\n\n\n\n\n\n\n\n\n\nClassifying Palmer Penguins\n\n\n\n\n\nHow I made models that could predict the species from the Palmer Penguins dataset.\n\n\n\n\n\nFeb 28, 2023\n\n\nJeff Blake\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/genre-deep-learning/genre_learning.html#discussion",
+    "href": "posts/genre-deep-learning/genre_learning.html#discussion",
+    "title": "My Awesome CSCI 0451 Blog",
+    "section": "Discussion",
+    "text": "Discussion\nIn the process of training these models, I found that the model trained with both the lyrics and features resulted in the highest accuracy. Further, I found that embeddings at higher dimensions are harder to visualize in a way that conveys consistently clear information about the target variable. In doing this blog post, I gained a lot of knowledge about data processing and loading (the creation of torch datasets, vocabularies, dataloaders, etc.) and practiced the creation of layers in different models. In particular, I learned more about model embeddings and how they can be used in tandem with fully-connected linear layers. The training process also showed me that including varied types of data (lyric versus engineered features) is extremely important in model creation."
   },
   {
     "objectID": "posts/newton-optimizer/index.html",

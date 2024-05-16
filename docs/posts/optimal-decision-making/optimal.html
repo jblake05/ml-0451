@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.554">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -234,6 +234,7 @@ background-size: cover;
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <div>
+<div>
 
 
 <table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
@@ -336,12 +337,14 @@ background-size: cover;
 </div>
 </div>
 </div>
+</div>
 <p>I first investigated the relationship between personal income, financial history, and loan amounts. I did this by creating a table that groups by income intervals of 10000 and checking credit history and the size of the loan. It shows that loan amounts granted increase as personal income increases, while one’s credit history tends to be higher as income increases, but this isn’t as drastic of an upward trend.</p>
 <div id="cell-6" class="cell" data-execution_count="28">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_train[<span class="st">"income_group"</span>] <span class="op">=</span> df_train[<span class="st">"person_income"</span>] <span class="op">//</span> <span class="dv">10000</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df_train.groupby([<span class="st">"income_group"</span>])[[<span class="st">"loan_amnt"</span>, <span class="st">"cb_person_cred_hist_length"</span>]].aggregate(<span class="st">"mean"</span>)[:<span class="dv">20</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
+<div>
 <div>
 
 
@@ -465,6 +468,7 @@ background-size: cover;
 </div>
 </div>
 </div>
+</div>
 <section id="data-visualizations" class="level3">
 <h3 class="anchored" data-anchor-id="data-visualizations">Data Visualizations</h3>
 <p>I then mapped aspects about the loan with respect to whether or not the grantee has previously defaulted on their loan. I mapped this as a seaborn scatterplot using loan interest rate and percent income. This revealed that those with a prior default on history are almost never granted an interest rate lower than 12%. Further, it showed that there isn’t much of a relationship between loan as a percentage of income and previous defaults being on file.</p>
@@ -535,6 +539,7 @@ background-size: cover;
 <div id="cell-16" class="cell" data-execution_count="32">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>X_train.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="32">
+<div>
 <div>
 
 
@@ -693,6 +698,7 @@ background-size: cover;
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="cross-validation-and-parameter-choice" class="level3">
 <h3 class="anchored" data-anchor-id="cross-validation-and-parameter-choice">Cross Validation and Parameter Choice</h3>
@@ -816,6 +822,7 @@ background-size: cover;
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>X_test[<span class="st">"loan_granted"</span>] <span class="op">=</span> <span class="op">~</span>X_test[<span class="st">"pred"</span>]</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>X_test</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="42">
+<div>
 <div>
 
 
@@ -1118,6 +1125,7 @@ background-size: cover;
 </div>
 </div>
 </div>
+</div>
 </section>
 <section id="part-f-evaluating-from-a-borrowers-perspective" class="level2">
 <h2 class="anchored" data-anchor-id="part-f-evaluating-from-a-borrowers-perspective">Part F: Evaluating from a Borrower’s Perspective</h2>
@@ -1339,6 +1347,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1373,7 +1399,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

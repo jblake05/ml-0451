@@ -125,6 +125,23 @@ class LogisticRegression(LinearModel):
         return torch.mean((self.sigmoid(s) - y)[:, None]*X, axis=0)
     
     def hessian(self, X, s):
+        """
+        Compute the Hessian matrix, a matrix of the second derivatives of the loss function
+
+        ARGUMENTS:
+            X, torch.Tensor (description used from above): the feature matrix.
+            X.size() == (n, p), where n is the number of data points and p is the 
+            number of features. This implementation always assumes 
+            that the final column of X is a constant column of 1s. 
+
+            s, torch.Tensor: the score vector computed using self.score. In practice 
+            (as implemented in the loss and grad functions), s.size() == (n,), where
+            n is the number of data points.
+
+        RETURNS:
+            H(w), torch.Tensor: the Hessian matrix. H(w).size() == (p, p), where p is 
+            the number of features of the data.
+        """
         diagonal = torch.diag(self.sigmoid(s)*(1-self.sigmoid(s)))
 
         return torch.matmul(torch.matmul(torch.t(X), diagonal), X)
@@ -132,12 +149,36 @@ class LogisticRegression(LinearModel):
 class NewtonOptimizer:
     
     def __init__(self, model):
+        """
+        Initialize the Newton optimizer with a model
+
+        ARGUMENTS:
+            model, LogisticRegression: The model this class optimizes weights for
+
+        RETURNS:
+            None
+        """
         self.model = model
-    
-    def diagonal(self, s):
-        self.model.sigmoid(s)*self.model.sigmoid()
 
     def step(self, X, y, alpha):
+        """
+        Performs a step of optimization for the logistic regression model using Newton's method,
+        updating its weight.
+
+        ARGUMENTS:
+            X, torch.Tensor (description used from above): the feature matrix.
+            X.size() == (n, p), where n is the number of data points and p is the 
+            number of features. This implementation always assumes 
+            that the final column of X is a constant column of 1s. 
+
+            y, torch.Tensor: the target vector. y.size() == (n,) where n is the number of
+            data points.
+
+            alpha, float: Learning rate
+
+        RETURNS:
+            None
+        """
         grad = self.model.grad(X, y)
         s = self.model.score(X)
 
